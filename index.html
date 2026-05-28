@@ -52,9 +52,9 @@ nav{background:var(--g);padding:0 5%;display:flex;align-items:center;justify-con
 .btn-salvar:hover{background:var(--gl)}
 .btn-salvar:disabled{background:#9cc;cursor:not-allowed}
 
-.alerta{border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.5;margin-bottom:16px;display:none}
-.alerta.ok{background:var(--gb);border:1px solid #9FE1CB;color:#085041;display:flex;gap:10px;align-items:flex-start}
-.alerta.erro{background:#FDECEA;border:1px solid #F09595;color:#A32D2D;display:flex;gap:10px;align-items:flex-start}
+.alerta{border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.5;margin-bottom:16px;display:none;gap:10px;align-items:flex-start}
+.alerta.ok{background:var(--gb);border:1px solid #9FE1CB;color:#085041}
+.alerta.erro{background:#FDECEA;border:1px solid #F09595;color:#A32D2D}
 
 /* ── CONSULTA ── */
 .busca-box{display:flex;gap:10px;margin-bottom:20px}
@@ -199,7 +199,7 @@ nav{background:var(--g);padding:0 5%;display:flex;align-items:center;justify-con
           <div class="field"><label>Observações adicionais</label><input name="observacoes" placeholder="Qualquer detalhe importante"></div>
         </div>
 
-        <button type="submit" class="btn-salvar" id="btn-salvar">Salvar→</button>
+        <button type="submit" class="btn-salvar" id="btn-salvar">Salvar clínica no Google Sheets →</button>
       </form>
     </div>
   </div>
@@ -275,6 +275,7 @@ document.getElementById('form-clinica').addEventListener('submit', async functio
     if (json.erro) throw new Error(json.mensagem);
 
     document.getElementById('alerta-ok').style.display = 'flex';
+    setTimeout(() => { document.getElementById('alerta-ok').style.display = 'none'; }, 5000);
     this.reset();
     document.querySelectorAll('.check-item.ck').forEach(el => {
       el.classList.remove('ck');
@@ -284,9 +285,10 @@ document.getElementById('form-clinica').addEventListener('submit', async functio
   } catch (err) {
     document.getElementById('msg-erro').textContent = err.message;
     document.getElementById('alerta-erro').style.display = 'flex';
+    setTimeout(() => { document.getElementById('alerta-erro').style.display = 'none'; }, 7000);
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Salvar clínica no Google Sheets →';
+    btn.textContent = 'Salvar clínica →';
   }
 });
 
