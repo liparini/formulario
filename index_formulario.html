@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Recepcionista — Cadastro de Clínicas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── COLE A URL DO SEU APPS SCRIPT AQUI ── */
+/* Procure por SCRIPT_URL no script abaixo  */
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--g:#0F6E56;--gl:#1D9E75;--gb:#E1F5EE;--bd:#e0dbd2;--ar:#FAF8F4;--mu:#5F5E5A;--pr:#1a1a1a}
+body{font-family:'DM Sans',sans-serif;background:#f5f5f3;color:var(--pr);min-height:100vh}
+
+nav{background:var(--g);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:Georgia,serif;font-size:18px;font-weight:700;color:#fff}
+.logo span{color:#9FE1CB}
+.nav-tabs{display:flex;gap:4px}
+.tab-btn{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.75);padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.tab-btn.ativo{background:#fff;color:var(--g)}
+.tab-btn:hover:not(.ativo){background:rgba(255,255,255,.2);color:#fff}
+
+.container{max-width:860px;margin:32px auto;padding:0 20px}
+
+/* ── FORMULÁRIO ── */
+.card{background:#fff;border-radius:16px;border:1px solid var(--bd);overflow:hidden;margin-bottom:24px}
+.card-hdr{background:var(--g);padding:22px 28px}
+.card-hdr h2{font-size:18px;font-weight:700;color:#fff;margin-bottom:4px}
+.card-hdr p{font-size:13px;color:rgba(255,255,255,.75)}
+.card-body{padding:24px 28px}
+
+.sec-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--g);margin-bottom:14px;margin-top:22px;padding-top:22px;border-top:1px solid #f0ede8}
+.sec-label:first-child{margin-top:0;padding-top:0;border-top:none}
+
+.row{display:grid;gap:14px;margin-bottom:14px}
+.col2{grid-template-columns:1fr 1fr}
+.col3{grid-template-columns:1fr 1fr 1fr}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:600;color:var(--mu)}
+.field input,.field select,.field textarea{background:var(--ar);border:1px solid var(--bd);border-radius:10px;padding:10px 13px;font-size:13px;color:var(--pr);font-family:inherit;outline:none;transition:border .2s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--g);background:#fff;box-shadow:0 0 0 3px rgba(15,110,86,.08)}
+.field textarea{resize:vertical;min-height:72px;line-height:1.5}
+
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check-item{display:flex;align-items:center;gap:8px;background:var(--ar);border:1px solid var(--bd);border-radius:8px;padding:9px 12px;cursor:pointer;font-size:12px;transition:all .2s}
+.check-item:hover{border-color:var(--g)}
+.check-item input{accent-color:var(--g);width:14px;height:14px;flex-shrink:0}
+.check-item.ck{border-color:var(--g);background:var(--gb);font-weight:600;color:#085041}
+
+.btn-salvar{width:100%;background:var(--g);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:8px}
+.btn-salvar:hover{background:var(--gl)}
+.btn-salvar:disabled{background:#9cc;cursor:not-allowed}
+
+.alerta{border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.5;margin-bottom:16px;display:none}
+.alerta.ok{background:var(--gb);border:1px solid #9FE1CB;color:#085041;display:flex;gap:10px;align-items:flex-start}
+.alerta.erro{background:#FDECEA;border:1px solid #F09595;color:#A32D2D;display:flex;gap:10px;align-items:flex-start}
+
+/* ── CONSULTA ── */
+.busca-box{display:flex;gap:10px;margin-bottom:20px}
+.busca-box input{flex:1;background:#fff;border:1px solid var(--bd);border-radius:10px;padding:10px 14px;font-size:13px;font-family:inherit;outline:none}
+.busca-box input:focus{border-color:var(--g)}
+.btn-buscar{background:var(--g);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn-buscar:hover{background:var(--gl)}
+
+.clinica-card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:20px 22px;margin-bottom:14px;transition:border .2s}
+.clinica-card:hover{border-color:var(--g)}
+.clinica-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.clinica-nome{font-size:16px;font-weight:700;color:var(--pr)}
+.clinica-plano{font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;background:var(--gb);color:var(--g)}
+.clinica-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.clinica-item{font-size:12px;color:var(--mu)}
+.clinica-item strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--g);margin-bottom:2px}
+.badge-status{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;background:#E1F5EE;color:#0F6E56}
+
+.empty{text-align:center;padding:48px 24px;color:var(--mu)}
+.empty .icon{font-size:40px;margin-bottom:12px;display:block}
+.empty p{font-size:14px}
+
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.stat{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;text-align:center}
+.stat-num{font-size:28px;font-weight:700;color:var(--g);display:block;font-family:Georgia,serif}
+.stat-lbl{font-size:12px;color:var(--mu);margin-top:2px}
+
+@media(max-width:600px){
+  .col2,.col3,.clinica-grid,.stat-row{grid-template-columns:1fr}
+  .check-grid{grid-template-columns:1fr}
+  .busca-box{flex-direction:column}
+  nav{padding:0 4%}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">minha<span>recepcionista</span></div>
+  <div class="nav-tabs">
+    <button class="tab-btn ativo" onclick="mostrarAba('form')">Cadastrar Clínica</button>
+    <button class="tab-btn" onclick="mostrarAba('consulta')">Consultar Clínicas</button>
+  </div>
+</nav>
+
+<!-- ═══════════ ABA: FORMULÁRIO ═══════════ -->
+<div id="aba-form" class="container">
+
+  <div id="alerta-ok" class="alerta ok">
+    ✅ <div><strong>Clínica cadastrada com sucesso!</strong><br>Os dados foram salvos no Google Sheets automaticamente.</div>
+  </div>
+  <div id="alerta-erro" class="alerta erro">
+    ❌ <div id="msg-erro">Erro ao salvar. Verifique a URL do Apps Script e tente novamente.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr">
+      <h2>Cadastro de nova clínica</h2>
+      <p>Preencha as informações de onboarding. Os dados são salvos automaticamente no Google Sheets.</p>
+    </div>
+    <div class="card-body">
+      <form id="form-clinica">
+
+        <div class="sec-label">Dados gerais</div>
+        <div class="row"><div class="field"><label>Nome da clínica *</label><input name="nome_clinica" required placeholder="Ex: Clínica Saúde Total"></div></div>
+        <div class="row col2">
+          <div class="field"><label>Especialidade(s) *</label><input name="especialidade" required placeholder="Ex: Ortopedia, Dermatologia"></div>
+          <div class="field"><label>Responsável / Proprietário *</label><input name="responsavel" required placeholder="Nome completo"></div>
+        </div>
+        <div class="row col2">
+          <div class="field"><label>WhatsApp da clínica *</label><input name="whatsapp" required placeholder="(31) 00000-0000"></div>
+          <div class="field"><label>E-mail</label><input name="email" type="email" placeholder="contato@clinica.com"></div>
+        </div>
+        <div class="row"><div class="field"><label>Endereço completo</label><input name="endereco" placeholder="Rua, nº, bairro, cidade"></div></div>
+
+        <div class="sec-label">Horários</div>
+        <div class="row col3">
+          <div class="field"><label>Abertura</label><input name="abertura" type="time" value="08:00"></div>
+          <div class="field"><label>Fechamento</label><input name="fechamento" type="time" value="18:00"></div>
+          <div class="field"><label>Atende sábado?</label>
+            <select name="sabado"><option value="">Selecione</option><option>Não</option><option>Sim, manhã</option><option>Sim, dia todo</option></select>
+          </div>
+        </div>
+
+        <div class="sec-label">Equipe</div>
+        <div class="row col2">
+          <div class="field"><label>Nº de profissionais</label><input name="n_profissionais" type="number" min="1" placeholder="Ex: 3"></div>
+          <div class="field"><label>Sistema de agenda usado</label><input name="sistema_agenda" placeholder="Ex: Doctoralia, Google Agenda"></div>
+        </div>
+        <div class="row"><div class="field"><label>Médicos e especialidades</label>
+          <textarea name="medicos" placeholder="Ex:&#10;Dr. João Silva — Ortopedista&#10;Dra. Ana Costa — Dermatologista"></textarea>
+        </div></div>
+
+        <div class="sec-label">Convênios e valores</div>
+        <div class="row col2">
+          <div class="field"><label>Convênios aceitos</label><input name="convenios" placeholder="Ex: Unimed, Amil, Particular"></div>
+          <div class="field"><label>Valor consulta particular (R$)</label><input name="valor_particular" type="number" min="0" placeholder="Ex: 250"></div>
+        </div>
+
+        <div class="sec-label">Fluxo atual de atendimento</div>
+        <div class="row"><div class="field"><label>Como é feito o agendamento hoje? (marque todos)</label>
+          <div class="check-grid">
+            <label class="check-item" onclick="ck(this)"><input type="checkbox" value="WhatsApp">WhatsApp</label>
+            <label class="check-item" onclick="ck(this)"><input type="checkbox" value="Telefone">Telefone</label>
+            <label class="check-item" onclick="ck(this)"><input type="checkbox" value="Presencial">Presencial</label>
+            <label class="check-item" onclick="ck(this)"><input type="checkbox" value="Site/App">Site / App</label>
+          </div>
+          <input type="hidden" name="como_agenda" id="como_agenda">
+        </div></div>
+        <div class="row col2">
+          <div class="field"><label>Volume de mensagens/dia (WhatsApp)</label>
+            <select name="volume_msgs">
+              <option value="">Selecione</option><option>Menos de 10</option><option>10 a 30</option>
+              <option>30 a 60</option><option>60 a 100</option><option>Mais de 100</option>
+            </select>
+          </div>
+          <div class="field"><label>Tom de atendimento preferido</label>
+            <select name="tom">
+              <option value="">Selecione</option><option>Formal (sr./sra.)</option>
+              <option>Amigável e próximo</option><option>Misto</option>
+            </select>
+          </div>
+        </div>
+        <div class="row"><div class="field"><label>Principais problemas no atendimento hoje</label>
+          <textarea name="problemas" placeholder="Ex: muitas faltas, demora para responder, recepcionista sobrecarregada..."></textarea>
+        </div></div>
+
+        <div class="sec-label">Contrato</div>
+        <div class="row col2">
+          <div class="field"><label>Plano contratado *</label>
+            <select name="plano" required>
+              <option value="">Selecione</option>
+              <option>Essencial — R$497/mês</option>
+              <option>Profissional — R$797/mês</option>
+              <option>Clínica — R$1.197/mês</option>
+            </select>
+          </div>
+          <div class="field"><label>Data de início do atendimento</label><input name="data_inicio" type="date"></div>
+        </div>
+        <div class="row col2">
+          <div class="field"><label>Contato direto do responsável</label><input name="contato_resp" placeholder="WhatsApp / celular"></div>
+          <div class="field"><label>Observações adicionais</label><input name="observacoes" placeholder="Qualquer detalhe importante"></div>
+        </div>
+
+        <button type="submit" class="btn-salvar" id="btn-salvar">Salvar clínica no Google Sheets →</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ ABA: CONSULTA ═══════════ -->
+<div id="aba-consulta" class="container" style="display:none">
+
+  <div class="stat-row" id="stats">
+    <div class="stat"><span class="stat-num" id="s-total">—</span><span class="stat-lbl">Clínicas cadastradas</span></div>
+    <div class="stat"><span class="stat-num" id="s-ativas">—</span><span class="stat-lbl">Contratos ativos</span></div>
+    <div class="stat"><span class="stat-num" id="s-plano">—</span><span class="stat-lbl">Plano mais comum</span></div>
+  </div>
+
+  <div class="busca-box">
+    <input type="text" id="busca" placeholder="Buscar por nome, especialidade ou plano..." oninput="filtrar()">
+    <button class="btn-buscar" onclick="carregarClinicas()">↻ Atualizar</button>
+  </div>
+
+  <div id="lista-clinicas">
+    <div class="empty"><span class="icon">🏥</span><p>Clique em "Atualizar" para carregar as clínicas cadastradas.</p></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// COLE A URL DO SEU GOOGLE APPS SCRIPT AQUI:
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8dNYH1WQ_L1ew3ouq1my34NHNiCAwEFOISOkSrSRbjpF17PFU_Oof-qwpn8g_yKK8hw/exec";
+// Ex: "https://script.google.com/macros/s/AK.../exec"
+// ══════════════════════════════════════════════
+
+let todasClinicas = [];
+
+function mostrarAba(aba) {
+  document.getElementById('aba-form').style.display      = aba === 'form'     ? '' : 'none';
+  document.getElementById('aba-consulta').style.display  = aba === 'consulta' ? '' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('ativo', (aba === 'form' && i === 0) || (aba === 'consulta' && i === 1));
+  });
+  if (aba === 'consulta') carregarClinicas();
+}
+
+function ck(el) {
+  const cb = el.querySelector('input');
+  cb.checked = !cb.checked;
+  el.classList.toggle('ck', cb.checked);
+  const vals = [...document.querySelectorAll('.check-item.ck input')].map(i => i.value);
+  document.getElementById('como_agenda').value = vals.join(', ');
+}
+
+// ── SALVAR ────────────────────────────────────
+document.getElementById('form-clinica').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-salvar');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  ocultarAlertas();
+
+  const fd = new FormData(this);
+  const dados = {};
+  fd.forEach((v, k) => { dados[k] = v; });
+
+  try {
+    if (!SCRIPT_URL || SCRIPT_URL.includes('COLE_AQUI')) {
+      throw new Error('Configure a URL do Apps Script no arquivo HTML (constante SCRIPT_URL).');
+    }
+    const r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(dados),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+    const json = await r.json();
+    if (json.erro) throw new Error(json.mensagem);
+
+    document.getElementById('alerta-ok').style.display = 'flex';
+    this.reset();
+    document.querySelectorAll('.check-item.ck').forEach(el => {
+      el.classList.remove('ck');
+      el.querySelector('input').checked = false;
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    document.getElementById('msg-erro').textContent = err.message;
+    document.getElementById('alerta-erro').style.display = 'flex';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Salvar clínica no Google Sheets →';
+  }
+});
+
+// ── CARREGAR E EXIBIR ─────────────────────────
+async function carregarClinicas() {
+  document.getElementById('lista-clinicas').innerHTML =
+    '<div class="empty"><span class="icon">⏳</span><p>Carregando clínicas...</p></div>';
+  try {
+    if (!SCRIPT_URL || SCRIPT_URL.includes('COLE_AQUI')) {
+      throw new Error('Configure a URL do Apps Script no arquivo HTML (constante SCRIPT_URL).');
+    }
+    const r    = await fetch(SCRIPT_URL + '?action=get&t=' + Date.now());
+    const json = await r.json();
+    todasClinicas = json.clinicas || [];
+    atualizarStats();
+    filtrar();
+  } catch (err) {
+    document.getElementById('lista-clinicas').innerHTML =
+      `<div class="empty"><span class="icon">⚠️</span><p>${err.message}</p></div>`;
+  }
+}
+
+function atualizarStats() {
+  document.getElementById('s-total').textContent = todasClinicas.length;
+  const ativos = todasClinicas.length;
+  document.getElementById('s-ativas').textContent = ativos;
+  if (todasClinicas.length) {
+    const planos = {};
+    todasClinicas.forEach(c => {
+      const p = (c['Plano contratado'] || '').split('—')[0].trim() || 'N/A';
+      planos[p] = (planos[p] || 0) + 1;
+    });
+    const mais = Object.entries(planos).sort((a,b)=>b[1]-a[1])[0];
+    document.getElementById('s-plano').textContent = mais ? mais[0] : '—';
+  }
+}
+
+function filtrar() {
+  const q = (document.getElementById('busca').value || '').toLowerCase();
+  const filtradas = q
+    ? todasClinicas.filter(c =>
+        (c['Nome da Clínica'] || '').toLowerCase().includes(q) ||
+        (c['Especialidade'] || '').toLowerCase().includes(q) ||
+        (c['Plano contratado'] || '').toLowerCase().includes(q) ||
+        (c['Responsável'] || '').toLowerCase().includes(q))
+    : todasClinicas;
+  renderClinicas(filtradas);
+}
+
+function renderClinicas(lista) {
+  const el = document.getElementById('lista-clinicas');
+  if (!lista.length) {
+    el.innerHTML = '<div class="empty"><span class="icon">🔍</span><p>Nenhuma clínica encontrada.</p></div>';
+    return;
+  }
+  el.innerHTML = lista.map(c => `
+    <div class="clinica-card">
+      <div class="clinica-top">
+        <div>
+          <div class="clinica-nome">${c['Nome da Clínica'] || '—'}</div>
+          <div style="font-size:12px;color:#5F5E5A;margin-top:3px">${c['Especialidade'] || ''}</div>
+        </div>
+        <span class="clinica-plano">${(c['Plano contratado'] || 'N/A').split('—')[0].trim()}</span>
+      </div>
+      <div style="font-size:12px;color:#5F5E5A;border-top:1px solid #f0ede8;padding-top:10px">
+        Cadastrado em: ${c['Data Cadastro'] || '—'}
+      </div>
+      <div class="clinica-grid">
+        <div class="clinica-item"><strong>Responsável</strong>${c['Responsável'] || '—'}</div>
+        <div class="clinica-item"><strong>WhatsApp</strong>${c['WhatsApp'] || '—'}</div>
+        <div class="clinica-item"><strong>Horário</strong>${c['Horário Abertura'] || '—'} às ${c['Horário Fechamento'] || '—'}</div>
+        <div class="clinica-item"><strong>Profissionais</strong>${c['Nº Profissionais'] || '—'}</div>
+        <div class="clinica-item"><strong>Sistema de Agenda</strong>${c['Sistema Agenda'] || '—'}</div>
+        <div class="clinica-item"><strong>Início</strong>${c['Data início'] || '—'}</div>
+      </div>
+      ${c['Observações'] ? `<div style="margin-top:10px;font-size:12px;color:#5F5E5A;background:#FAF8F4;padding:8px 12px;border-radius:8px">📝 ${c['Observações']}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function ocultarAlertas() {
+  document.getElementById('alerta-ok').style.display = 'none';
+  document.getElementById('alerta-erro').style.display = 'none';
+}
+</script>
+</body>
+</html>
